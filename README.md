@@ -180,6 +180,8 @@ Handoff the coder. Don't rewrite the specs.
 
 A file with `kind: contract` (or `*contract*` in the name) **wins collisions**. `kind: standard` is anatomy, not product. Neither is implemented. Plans land in `<pack>/plans/<stem>.plan.md`. Already-shipped children go under `## Skip`. Code mode can differ **per PRD** (`handoff` vs `spawn`); the run has a default, not a single law for the whole pack.
 
+The pack is one product sliced into PRDs. Mid-cut emptiness or a broken old URL is not a question — later PRDs finish the story. Planners do not re-ask earlier cuts or keep loopholes "until it is useful again."
+
 If you only want one child:
 
 ```

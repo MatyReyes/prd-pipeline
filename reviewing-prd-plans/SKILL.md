@@ -50,6 +50,10 @@ Then **only** violations, if any:
 
 **Invented product = FAIL.** No exceptions.
 
+A plan that implements **this** PRD strictly while later pack PRDs are still undone is **not** a FAIL. Mid-pack incompleteness is the design.
+
+A plan that keeps a loophole, alias, or legacy path "until a later PRD" when **this** PRD or the contract already forbids it = FAIL.
+
 If FAIL, name the deviation in the form: `PRD: … | Plan: …`.
 
 ## Do not

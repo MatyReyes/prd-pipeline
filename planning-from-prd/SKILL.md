@@ -23,7 +23,19 @@ In the same folder as the feature PRD (optional `_pack.md` / `_schedule.md`):
 | **Parent** | `kind: prd` that is spec-only / named `parent:` in `_pack.md` | Product fence if there is no contract. |
 | **Feature** | The one PRD you were named | The only thing you plan. |
 
-Do not read sibling **feature** PRDs "for context".
+Do not read sibling **feature** PRDs to redesign them. The pack already decided the product. This cut only implements **this** PRD.
+
+## The pack is the product
+
+The feature PRDs in the folder were written together. The product is finished when **the last implementable PRD in the pack** is done — not when this cut ships.
+
+A mid-pack cut may look useless, break an old URL, or leave a screen empty until a later PRD. **That is the design.** Do not ask to keep a loophole, alias, or legacy path "until two more iterations make it useful." Do not implement a sibling PRD to make this cut feel complete.
+
+Earlier feature PRDs (and their plans, if any) are **locked**:
+
+- Their Done-when, Forbidden, and "this is the next PRD" deferrals are not questions.
+- Work they deferred **to this file** (proxy, `can()`, sillas, …) is **this plan's job**. Do it. Do not re-ask whether to do it.
+- Do not re-litigate their routes, names, chrome, or nav.
 
 ## Read, in this order, and nothing else
 
@@ -62,15 +74,29 @@ If `<pack>/plans/<prd-stem>.plan.md` already exists, **do not overwrite it**. Te
 
 ## Edge cases before the plan file
 
-A missed edge case is either a bad assumption or a cheap discovery. Surface it **before** you write the plan.
+Most "edge cases" are already decided. Put them in the plan. Do not quiz the user.
 
-1. Pull candidates from the PRD (WHEN / conditions / locks / promises / agent section) **and** from the repo.
-2. Present each: in scope / out of scope / needs a PRD change.
-3. Wait for the user.
+**Write into the plan (do not ask):**
 
-If you are a mute subagent (orchestrated): output a heading `EDGE_CASES` and **stop**. Do not write the plan file unless the prompt contains `CONFIRMED_EDGES` with the user's decisions. Never resume an earlier planner; the parent will spawn you again.
+- In scope — the PRD / agent section already says to do it
+- Out of scope / Forbidden — already named; list under "will not touch"
+- Locked by an earlier PRD in this pack
+- Deferred **to this** PRD by an earlier cut
+- "If we close this, it will not be useful until PRD N+2"
+- "The old URL / old role / old page will break until later"
+- Softening this PRD so the mid-pack app still feels finished
 
-An edge case does not sneak in as "an implementation detail".
+**Ask only if this PRD + contract still cannot choose:**
+
+1. Two options both allowed (e.g. 404 **or** home) and neither file picks one.
+2. This PRD requires something Forbidden / the workspace makes physically impossible — you need an explicit authorize (one exception), not a redesign.
+3. Contract vs this PRD still collide after the authority rule.
+
+If that list is **empty**, write the plan. No questionnaire.
+
+If you must ask: number only the real forks. One line each. No tables of "in scope / out of scope."
+
+Mute subagent: output `EDGE_CASES` **only** for those real forks, then **stop**. If there are none, write the plan. Never resume an earlier planner.
 
 ## What the plan must contain
 
@@ -102,7 +128,9 @@ Tell the user the path. Optional next skills: `reviewing-prd-plans`, then `execu
 ## Red flags — stop
 
 - You are reaching for a file editor to implement
-- You assumed an edge case
+- You assumed a real fork (404 vs home, authorize Forbidden, unresolved contract)
+- You asked whether to stay compatible until a later PRD
+- You re-asked a decision an earlier PRD in this pack already locked
 - You planned work Forbidden / Scope said not to touch
 - You cited a Done-when the PRD does not contain
 - You overwrote a plan nobody asked to replan

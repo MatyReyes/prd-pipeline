@@ -69,7 +69,7 @@ For each implementable PRD that is **not** skipped / already done, in **code-wav
 For each PRD in the wave, spawn a **new** subagent:
 
 - Skill: `planning-from-prd`
-- Prompt: pack folder + contract path if any + standard path if any + **that one** feature PRD. Tell it to list edge cases and **stop** unless the prompt already contains `CONFIRMED_EDGES`. If a plan file already exists, do not spawn a planner unless they asked to replan.
+- Prompt: pack folder + contract path if any + standard path if any + **that one** feature PRD. The pack is the product; do not re-ask locked cuts; do not soften this PRD because a later PRD is unfinished. `EDGE_CASES` only for real forks this PRD + contract cannot close. If that list is empty, write the plan. If a plan file already exists, do not spawn a planner unless they asked to replan.
 - `model`: `planning_model`
 - `capability_mode`: `read-write` (plan file only)
 
