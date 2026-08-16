@@ -157,6 +157,8 @@ Already have a `PASS` plan? It starts at code. Handoff pauses with `Copy this:` 
 
 Every child gets `cwd` = nearest `.git` walking up from the PRD/plan (e.g. `platform_admin/`, not the folder of folders). That path is `TARGET_GIT_ROOT` in the prompt and in `_run.md`.
 
+`_run.md` is settings (mode, models, cwd). The parent must spawn a **cold** worker: closed file list, no `resume_from`, no sibling PRDs, no parent transcript. If the parent writes the plan itself, that is a bug.
+
 Commit (or otherwise isolate) a cut after `PASS` before the next PRD. A reviewer must not treat an earlier plan’s uncommitted files as this cut going out of scope.
 
 `step=plan` (one child only) is the exception.

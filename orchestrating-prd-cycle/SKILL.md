@@ -8,7 +8,9 @@ when-to-use: orchestrate PRD cycle, spawn vs handoff, run all PRDs, use orchestr
 
 # Orchestrating the PRD cycle
 
-You are the parent session. You do not write PRDs. You do not code. You do not reuse a subagent.
+You are the parent session. You do not write PRDs. You do not write plans. You do not review. You do not code. You do not reuse a subagent.
+
+If you catch yourself opening `*.plan.md` to author it, or judging PASS/FAIL, or editing app code — **stop**. Spawn a worker. You only route.
 
 **Existing PRDs are the normal start.** Do not run `writing-prds`. Do not rewrite markdown the user already accepted.
 
@@ -31,7 +33,48 @@ For **that PRD** (or each remaining PRD in the pack) you, without waiting for a 
 4. After code (or after they say the Luna code is done) → spawn code reviewer  
 5. `PASS` → next PRD in the schedule. `FAIL` → repair cut → code again → new reviewer  
 
-Every child prompt starts with `WORKER:` and names only that role's files. Never `resume_from`. Never two roles in one child.
+Every child is a **cold worker**. See **Cold worker** below.
+
+## Cold worker
+
+The parent may have just finished AT03. That memory **must not** enter the AT04 child.
+
+Before each spawn, print this card (and obey it):
+
+```
+SPAWN <role>
+cwd: <TARGET_GIT_ROOT>
+resume_from: none
+files: <closed list>
+not in prompt: sibling feature PRDs, prior plans, prior reviews, this chat
+```
+
+**Closed file lists**
+
+| Role | Files in the worker prompt (only these) |
+|---|---|
+| Planner | contract (if any), standard (if any), **one** feature PRD, this skill |
+| Plan reviewer | contract (if any), **that** PRD, **that** plan, this skill |
+| Coder | **that** plan (PRD + contract only if the plan is ambiguous), this skill |
+| Code reviewer | contract (if any), **that** PRD, **that** plan, this skill. May *read* earlier `plans/*.plan.md` **file lists only** to subtract a dirty prior cut |
+
+Prompt shape (copy, do not improvise):
+
+```
+WORKER:
+TARGET_GIT_ROOT: <abs>
+cd there.
+Read and obey skill <name>.
+Read only:
+- <file>
+- <file>
+Do not read other feature PRDs. Do not use the parent chat as context.
+resume_from is forbidden.
+```
+
+`_run.md` is never in that list except the parent reading settings. Do not attach `_run.md` to the worker.
+
+If the harness spawn tool has `resume_from`, leave it unset. If it has `cwd`, set `TARGET_GIT_ROOT`.
 
 Skip whatever is already done (existing `PASS` plan, user said skip / shipped). Resume mid-cut: if the plan is `PASS` and they said “code in Luna”, start at step 3. Do not replan.
 
@@ -103,10 +146,12 @@ mode: handoff
 planning_model: grok-4.6
 coding_model: grok-4.6
 target_git_root: /absolute/path/to/platform_admin
+current: 04-clientes-soporte.md
 per_prd:
-  02-sillas.md: spawn
   04-clientes-soporte.md: spawn
 ```
+
+Do not put plans, reviews, or chat notes in this file. `notes:` if present is discarded by workers (they never read `_run.md`).
 
 `per_prd` overrides `mode`. Unlisted implementable PRDs use `mode`.
 
