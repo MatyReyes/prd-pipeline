@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none" role="img" aria-label="PRD Pipeline">
+  <rect width="128" height="128" rx="28" fill="#0B1220"/>
+  <rect x="28" y="26" width="52" height="68" rx="6" fill="#F4F1EA"/>
+  <rect x="36" y="38" width="36" height="4" rx="2" fill="#0B1220" opacity="0.85"/>
+  <rect x="36" y="48" width="28" height="4" rx="2" fill="#0B1220" opacity="0.35"/>
+  <rect x="36" y="58" width="32" height="4" rx="2" fill="#0B1220" opacity="0.35"/>
+  <rect x="48" y="42" width="52" height="60" rx="6" fill="none" stroke="#5EEAD4" stroke-width="4"/>
+  <path d="M78 86.5l6 6 12-14" stroke="#5EEAD4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
