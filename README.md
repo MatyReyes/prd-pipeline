@@ -141,27 +141,23 @@ Ask me anything you need. Don't assume.
 
 ---
 
-## Fewer steps
+## Harness
 
-One parent chat. **One** slash. The parent chains a new child per role (plan → review plan → code → review code). You do not open a chat per role and you do not launch each step.
+**One parent chat = one feature PRD.** Workers spawn, finish, die. AT05 is a **new** chat.
+
+The parent asks and **waits** (does not dump a speech):
+
+1. Which PRD (if you did not name one)
+2. **Which git** (lists repos with `.git` — e.g. `platform_admin/` vs `mvp/`)
+3. Spawn vs handoff (if you did not say)
+
+Then it chains plan → review plan → code → review code. After code **PASS** it **proposes a commit** (this cut only) and waits. If the tree is mixed, it says what to split — it does not force-commit another AT.
 
 ```
-/orchestrating-prd-cycle platform_admin/prds/02-sillas.md handoff
+/orchestrating-prd-cycle platform_admin/prds/05-dinero.md handoff
 ```
 
-```
-/orchestrating-prd-cycle pack=platform_admin/prds handoff skip=01-caparazon
-```
-
-Already have a `PASS` plan? It starts at code. Handoff pauses with `Copy this:` for Luna; you come back to **this** chat and say the code is done — review-code fires by itself.
-
-Every child gets `cwd` = nearest `.git` walking up from the PRD/plan (e.g. `platform_admin/`, not the folder of folders). That path is `TARGET_GIT_ROOT` in the prompt and in `_run.md`.
-
-`_run.md` is settings (mode, models, cwd). The parent must spawn a **cold** worker: closed file list, no `resume_from`, no sibling PRDs, no parent transcript. If the parent writes the plan itself, that is a bug. A `CONTAMINATED` child is discarded; the parent respawns once, clean — it does not end the run.
-
-Commit (or otherwise isolate) a cut after `PASS` before the next PRD. A reviewer must not treat an earlier plan’s uncommitted files as this cut going out of scope.
-
-`step=plan` (one child only) is the exception.
+`_run.md` is settings only. Cold worker: closed files, no `resume_from`. `CONTAMINATED` → respawn once, do not end the run.
 
 ---
 
