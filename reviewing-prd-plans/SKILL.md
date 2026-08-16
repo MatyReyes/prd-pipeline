@@ -10,7 +10,15 @@ when-to-use: review a PRD plan, PASS or FAIL plan, invented product, use reviewi
 
 You do not code. You do not rewrite the plan. You do not suggest "improvements".
 
-This skill is complete by itself. After the verdict, **stop**. If FAIL, the parent / user adjusts and calls you again as a **new** session — do not keep going.
+This skill is complete by itself. After the verdict, **stop**. If FAIL, the parent / user adjusts and launches you again as a **new** subagent — do not keep going.
+
+## Parent vs worker
+
+If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
+
+If you are the **top-level** session and this harness can spawn: do **not** judge the plan yourself. Spawn **one** new subagent (`capability_mode: read-only`, never `resume_from`) whose prompt is `WORKER:` + this skill + contract + PRD + plan. Relay `PASS` / `FAIL` exactly. Stop.
+
+If this harness cannot spawn: you are the worker.
 
 ## Read, and nothing else
 

@@ -1,8 +1,8 @@
 ---
 name: orchestrating-prd-cycle
-description: Use when running the PRD cycle from existing PRDs (plan → review plan → code → review code), starting at scheduling, spawning fresh subagents per step, choosing spawn vs handoff-code, or when the user says orchestrating-prd-cycle, /orchestrating-prd-cycle, "run the PRD cycle", "I already have the PRDs", "start from scheduling", "skip writing", "handoff the coder", or asks to use the installed orchestrating-prd-cycle skill. Do not use to write PRDs or to code yourself.
+description: Use when running one PRD step or the full pack (plan → review plan → code → review code), spawning a fresh subagent per launch, choosing spawn vs handoff-code, or when the user says orchestrating-prd-cycle, /orchestrating-prd-cycle, "plan this PRD", "review this plan", "review the code", "run the PRD cycle", "I already have the PRDs", "start from scheduling", or asks to use the installed orchestrating-prd-cycle skill. Do not use to write PRDs or to code yourself.
 user-invocable: true
-argument-hint: "[handoff|spawn] [juicio=model] [codeo=model] [pack=path]"
+argument-hint: "[plan|review-plan|code|review-code] [prd or plan path] [handoff|spawn]"
 when-to-use: orchestrate PRD cycle, spawn vs handoff, run all PRDs, use orchestrating-prd-cycle
 ---
 
@@ -16,7 +16,30 @@ Only send them to `writing-prds` if there are **no** feature PRDs in the named f
 
 ## Solo or cycle
 
-This skill is the automation. Each child skill still works alone. You call them as **new** subagents (or handoff packets). You never `resume_from`.
+**Default: one launch = one new subagent.** You stay the parent. You never do the child's job.
+
+```
+/orchestrating-prd-cycle plan platform_admin/prds/02-sillas.md
+/orchestrating-prd-cycle review-plan platform_admin/prds/02-sillas.md
+/orchestrating-prd-cycle code platform_admin/prds/plans/02-sillas.plan.md handoff
+/orchestrating-prd-cycle review-code platform_admin/prds/02-sillas.md
+```
+
+Same if they say “plan 02-sillas” / “review this plan” / “execute in Luna” / “review the code” while this skill is loaded.
+
+| Step | Child skill | `capability_mode` | `model` |
+|---|---|---|---|
+| `plan` | `planning-from-prd` | `read-write` | `planning_model` |
+| `review-plan` | `reviewing-prd-plans` | `read-only` | `planning_model` |
+| `code` + spawn | `executing-prd-plan` | `all` | `coding_model` |
+| `code` + handoff | none — print `Copy this:`, pause | — | — |
+| `review-code` | `reviewing-prd-code` | `read-only` (shell only for `git diff` / tests) | `planning_model` |
+
+After that **one** child returns, **stop**. Do not walk the next step or the next PRD unless they launch again (or they asked for the full pack).
+
+Every child prompt starts with `WORKER:` and names only the files that role may read. Never `resume_from`. Never two roles in one child.
+
+If they named a **pack** and no step, walk the schedule (section 3). If they named a **step**, do not walk the pack.
 
 ## 1. Resolve the pack
 

@@ -10,7 +10,15 @@ when-to-use: review PRD code, PASS or FAIL implementation, Done when evidence, u
 
 You do not code. You do not suggest "improvements". You judge **this cut** against **this PRD**.
 
-This skill is complete by itself. After the verdict, **stop**. FAIL goes back to a repair cut + `executing-prd-plan`, in a **new** session.
+This skill is complete by itself. After the verdict, **stop**. FAIL goes back to a repair cut + `executing-prd-plan`, in a **new** subagent.
+
+## Parent vs worker
+
+If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
+
+If you are the **top-level** session and this harness can spawn: do **not** review the diff yourself. Spawn **one** new subagent (`capability_mode: read-only`, shell only for `git diff` / test output, never `resume_from`) whose prompt is `WORKER:` + this skill + contract + PRD + plan. Relay `PASS` / `FAIL` exactly. Stop.
+
+If this harness cannot spawn: you are the worker.
 
 ## Read
 

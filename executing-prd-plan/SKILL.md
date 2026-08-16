@@ -12,6 +12,18 @@ You are the coder. This is a coding stage. The plan already exists. You do not r
 
 This skill is complete by itself. Orchestrators must only call you after the plan review is **PASS**. If you were launched solo, still obey the plan — do not grow it.
 
+## Parent vs worker
+
+If the prompt starts with `WORKER:` or you are already a subagent (including a Luna / OpenCode paste): do the work below. Do not spawn.
+
+If you are the **top-level** session and this harness can spawn:
+
+- **Handoff** (user said Luna / another chat / `handoff`): do **not** code. Print the `Copy this:` packet from `orchestrating-prd-cycle` and stop.
+- **Spawn** (user said spawn / code here): spawn **one** new coder (`capability_mode: all`, never `resume_from`) whose prompt is `WORKER:` + this skill + the plan path. Relay the three proofs. Stop.
+- If they did not say: ask spawn vs handoff. Do not assume Luna. Do not assume this harness.
+
+If this harness cannot spawn: you are the worker.
+
 ## Read
 
 1. The plan named by the user (required).
