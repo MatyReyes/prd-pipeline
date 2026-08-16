@@ -35,8 +35,11 @@ If `git rev-parse` still fails, say so and **stop** — that is not a product FA
 
 Then run, and read the output:
 
-1. `git status` and `git diff --stat` (and `git diff --stat --cached` if needed) for the plan's allowlist.
-2. The plan's **test command** (from the plan file). If the plan lists several paths, run those. Fresh output. Exit code 0 is not assumed.
+1. `git status` and `git diff --stat` (and `git diff --stat --cached` if needed).
+2. **Split the tree:** this plan's allowlist vs earlier pack plans vs leftover. Do not treat the whole dirty folder as this cut.
+3. The plan's **test command** (from the plan file). If the plan lists several paths, run those. Fresh output. Exit code 0 is not assumed.
+
+This cut's Forbidden (“do not touch the previous shell”) means **new work in this cut** on those files. Uncommitted files a prior plan already listed are not a Forbidden hit.
 
 Missing output from Luna / the coder is **not** a violation. You did not inherit their terminal. Run the commands.
 
@@ -53,7 +56,8 @@ If the PRD has an **agent section**, Done-when / Forbidden / Touch come from the
 1. Is every **Done when** (agent section if present, else goals / promises) **green with evidence in the repo** (tests that ran, not a paragraph)?
 2. Are there files or behaviors **outside the plan** (or outside the repair cut)?  
    **Not a FAIL:** an *existing* test whose diff is only a fixture/import forced by a catalog/enum/CHECK this plan **did** change (old slug → new slug).  
-   **Still a FAIL:** new tests, new cases, product code, or a file that is not a test.
+   **Not a FAIL:** a file that belongs to an **earlier PRD in this pack** still sitting uncommitted. Open `plans/*.plan.md` (file lists only — do not reopen those products). If `01-….plan.md` already named `app/_ui/**` or `/equipo`, that is AT01 in a dirty tree, not this cut redrawing the shell.  
+   **Still a FAIL:** new product this plan did not name, and no earlier plan in the pack owns it.
 3. Did Forbidden / non-goals / "does not touch" get violated?
 
 If you ran the command and it failed, or a Done-when has no test that passed, it is not done. If you **did not run** the command, you have no verdict — run it or stop. Do not FAIL the product for your missing shell.

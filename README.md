@@ -157,6 +157,8 @@ Already have a `PASS` plan? It starts at code. Handoff pauses with `Copy this:` 
 
 Every child gets `cwd` = nearest `.git` walking up from the PRD/plan (e.g. `platform_admin/`, not the folder of folders). That path is `TARGET_GIT_ROOT` in the prompt and in `_run.md`.
 
+Commit (or otherwise isolate) a cut after `PASS` before the next PRD. A reviewer must not treat an earlier plan’s uncommitted files as this cut going out of scope.
+
 `step=plan` (one child only) is the exception.
 
 ---

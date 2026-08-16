@@ -181,7 +181,7 @@ Spawn a **new** subagent:
 - `model`: `planning_model`
 - `capability_mode`: `read-only` plus shell for git and tests
 
-**PASS** → next PRD / next wave.
+**PASS** → next PRD / next wave. Tell the user to **commit this cut** (or otherwise isolate it) before the next PRD so the next review is not a mixed tree. Do not commit for them unless they asked.
 
 **FAIL** → you write a **repair cut**: the files and behaviors that must change to clear the failures. Immovable. No extra product. That cut is the new plan for `executing-prd-plan` (spawn or another `Copy this:`). Then a **new** code reviewer. If it FAILs again, another repair cut — never reopen the product.
 
