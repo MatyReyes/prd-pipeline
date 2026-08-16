@@ -81,7 +81,13 @@ Skip spec-only (contract, standard, parent). Skip anything under `## Skip` or th
 
 ## 2. Ask how this run works (once)
 
-If `_run.md` already exists for this paused run, reuse it. Otherwise ask, in this order, unless the slash args already answered:
+`_run.md` is **settings only** (`mode`, models, `target_git_root`, `per_prd`). It is not memory. It is not a worker. It is not AT03’s plan.
+
+If `_run.md` exists, copy **those keys** if they still match what the user said. Then spawn a **new** planner anyway. Never `resume_from`. Never paste a prior PRD, prior plan, prior review, or parent transcript into the child.
+
+If `_run.md` names another `current:` PRD, overwrite `current` for this launch. Do not keep the old child’s notes as instructions.
+
+Otherwise ask, in this order, unless the slash args already answered:
 
 1. **Default: where does code run?**
    - **Spawn** — a coder subagent in *this* harness.
@@ -190,6 +196,7 @@ Spawn a **new** subagent:
 | Forbidden | Why |
 |---|---|
 | `resume_from` | Decisions leak across roles and PRDs |
+| Feeding the child this session’s earlier PRD | The parent remembers AT03; the worker must not |
 | One subagent, two roles | The reviewer becomes helpful |
 | One subagent, two PRDs | The second PRD inherits the first |
 | Coding before plan PASS | The plan is not the agreement |
@@ -204,6 +211,8 @@ If a child skill is not installed, paste its contract into the prompt (PASS/FAIL
 
 - You are about to code
 - You reused a subagent
+- You “reused _run.md” as if it were the planner
+- The worker prompt mentions a sibling feature PRD
 - You spawned a coder in handoff mode
 - You offered Luna / OpenCode / another tool as a **spawn** model
 - You continued past FAIL
