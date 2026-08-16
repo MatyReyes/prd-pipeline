@@ -37,6 +37,34 @@ Skip whatever is already done (existing `PASS` plan, user said skip / shipped). 
 
 **Only** if they explicitly say `step=plan` / “solo el review” / one verb: do that **one** child and stop. That is the exception, not the product.
 
+## Chain target (`cwd`)
+
+The parent session’s folder is **not** the worker’s repo. A tree can hold several `.git` (`platform_admin/`, `mvp/`, …). Children do not guess.
+
+**Resolve `TARGET_GIT_ROOT` once**, walking **up** from (first hit wins):
+
+1. The named plan file  
+2. Else the named feature PRD  
+3. Else the pack folder  
+
+The target is the nearest ancestor directory that contains `.git`.
+
+Write it in `_run.md` as `target_git_root: <absolute path>`.
+
+**Every spawn** must set the child’s `cwd` to `TARGET_GIT_ROOT` and put this in the prompt:
+
+```
+WORKER:
+TARGET_GIT_ROOT: <absolute path>
+cd there before git and tests.
+```
+
+Handoff `Copy this:` includes the same `TARGET_GIT_ROOT` (Luna must `cd` there).
+
+If the plan also touches a second repo (e.g. one migration under `mvp/`), name that path; `git` there separately. The **primary** target stays the pack’s repo.
+
+Spawning without `cwd=TARGET_GIT_ROOT` is a bug. A child that runs `git` at the parent folder and finds no repo has no product verdict — respawn with the right `cwd`.
+
 ## 1. Resolve the pack
 
 A pack is a directory of PRD markdown, or an explicit list of files the user named.
@@ -68,6 +96,7 @@ Write `_run.md` **in the pack folder**:
 mode: handoff
 planning_model: grok-4.6
 coding_model: grok-4.6
+target_git_root: /absolute/path/to/platform_admin
 per_prd:
   02-sillas.md: spawn
   04-clientes-soporte.md: spawn
@@ -88,7 +117,8 @@ For each implementable PRD that is **not** skipped / already done, in **code-wav
 For each PRD in the wave, spawn a **new** subagent:
 
 - Skill: `planning-from-prd`
-- Prompt: pack folder + contract path if any + standard path if any + **that one** feature PRD. The pack is the product; do not re-ask locked cuts; do not soften this PRD because a later PRD is unfinished. `EDGE_CASES` only for real forks this PRD + contract cannot close. If that list is empty, write the plan. If a plan file already exists, do not spawn a planner unless they asked to replan.
+- Prompt: `WORKER:` + `TARGET_GIT_ROOT` + pack folder + contract path if any + standard path if any + **that one** feature PRD. The pack is the product; do not re-ask locked cuts; do not soften this PRD because a later PRD is unfinished. `EDGE_CASES` only for real forks this PRD + contract cannot close. If that list is empty, write the plan. If a plan file already exists, do not spawn a planner unless they asked to replan.
+- `cwd`: `TARGET_GIT_ROOT`
 - `model`: `planning_model`
 - `capability_mode`: `read-write` (plan file only)
 
@@ -99,7 +129,8 @@ If it returns edge cases: surface them to the user, get decisions, spawn a **new
 Spawn a **new** subagent:
 
 - Skill: `reviewing-prd-plans`
-- Prompt: contract if any + that PRD + that plan. Nothing else.
+- Prompt: `WORKER:` + `TARGET_GIT_ROOT` + contract if any + that PRD + that plan. Nothing else.
+- `cwd`: `TARGET_GIT_ROOT`
 - `model`: `planning_model`
 - `capability_mode`: `read-only`
 
@@ -111,7 +142,7 @@ Spawn a **new** subagent:
 
 Resolve mode for **this** PRD: `per_prd` → schedule `code:` → `_run.md` `mode`. If still unset, ask. Do not assume.
 
-**Spawn:** new subagent, skill `executing-prd-plan`, prompt = the plan path (PRD + contract only if the plan is ambiguous), `model` = `coding_model`, `capability_mode` = `all`.
+**Spawn:** new subagent, skill `executing-prd-plan`, prompt = `WORKER:` + `TARGET_GIT_ROOT` + the plan path (PRD + contract only if the plan is ambiguous), `cwd` = `TARGET_GIT_ROOT`, `model` = `coding_model`, `capability_mode` = `all`.
 
 **Handoff:** do **not** spawn a coder. Print exactly one packet, then **pause**. Do not start the next PRD.
 
@@ -119,6 +150,8 @@ Resolve mode for **this** PRD: `per_prd` → schedule `code:` → `_run.md` `mod
 Copy this:
 
 You are the coder. Do not reopen the product.
+TARGET_GIT_ROOT: <absolute path>
+cd there before git and tests.
 Execute 100% of this plan:
 <absolute-or-repo path to .plan.md>
 
@@ -143,7 +176,8 @@ Dependents stay in the same working tree so they see the previous cut. Do not is
 Spawn a **new** subagent:
 
 - Skill: `reviewing-prd-code`
-- Prompt: contract if any + that PRD + this cut. Tell it to **run** `git diff --stat` and the plan's test command in the repo that has `.git`. Do not FAIL because a prior session's paste is missing.
+- Prompt: `WORKER:` + `TARGET_GIT_ROOT` + contract if any + that PRD + this cut. **Run** `git` and the plan's test command **there**. Do not FAIL because a prior session's paste is missing.
+- `cwd`: `TARGET_GIT_ROOT`
 - `model`: `planning_model`
 - `capability_mode`: `read-only` plus shell for git and tests
 

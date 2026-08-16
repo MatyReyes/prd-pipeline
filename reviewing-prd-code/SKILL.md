@@ -16,7 +16,7 @@ This skill is complete by itself. After the verdict, **stop**. FAIL goes back to
 
 If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
 
-If you are the **top-level** session and this harness can spawn: do **not** review the diff yourself. Spawn **one** new subagent (`capability_mode: read-only` plus shell for `git` and the plan's test command, never `resume_from`) whose prompt is `WORKER:` + this skill + contract + PRD + plan + **the repo root that contains `.git` for this cut**. Relay `PASS` / `FAIL` exactly. Stop.
+If you are the **top-level** session and this harness can spawn: do **not** review the diff yourself. Resolve `TARGET_GIT_ROOT` (nearest `.git` walking up from the plan, else the PRD, else the pack). Spawn **one** new subagent with `cwd` = that path, prompt `WORKER:` + `TARGET_GIT_ROOT:` + this skill + contract + PRD + plan (never `resume_from`). Relay `PASS` / `FAIL` exactly. Stop.
 
 If this harness cannot spawn: you are the worker.
 
@@ -29,7 +29,9 @@ If this harness cannot spawn: you are the worker.
 
 ## You must run (do not skip)
 
-`cd` into the **git repo that owns the files** (this pack may live in a monorepo folder with its own `.git`, e.g. `platform_admin/`). If `git rev-parse` fails, say so and **stop** — that is not a product FAIL; the parent must reopen the review in the right cwd.
+`cd` to `TARGET_GIT_ROOT` if the prompt set it. Else walk **up from the plan file** (then the PRD) until you find `.git`. Do not use the process cwd if that walk finds another root (a parent folder of several repos is not the target).
+
+If `git rev-parse` still fails, say so and **stop** — that is not a product FAIL; the parent must respawn with `cwd` set.
 
 Then run, and read the output:
 

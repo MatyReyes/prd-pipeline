@@ -155,6 +155,8 @@ One parent chat. **One** slash. The parent chains a new child per role (plan →
 
 Already have a `PASS` plan? It starts at code. Handoff pauses with `Copy this:` for Luna; you come back to **this** chat and say the code is done — review-code fires by itself.
 
+Every child gets `cwd` = nearest `.git` walking up from the PRD/plan (e.g. `platform_admin/`, not the folder of folders). That path is `TARGET_GIT_ROOT` in the prompt and in `_run.md`.
+
 `step=plan` (one child only) is the exception.
 
 ---

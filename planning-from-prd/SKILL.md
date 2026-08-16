@@ -16,7 +16,7 @@ This skill is complete by itself. After the plan file exists (and the user has s
 
 If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
 
-If you are the **top-level** session and this harness can spawn: do **not** write the plan yourself. Spawn **one** new subagent (`capability_mode: read-write`, never `resume_from`) whose prompt is `WORKER:` + this skill + the named PRD / pack paths. Relay `EDGE_CASES` or the plan path to the user. Stop.
+If you are the **top-level** session and this harness can spawn: do **not** write the plan yourself. Resolve `TARGET_GIT_ROOT` (nearest `.git` up from the PRD). Spawn **one** new subagent (`cwd` = that path, `capability_mode: read-write`, never `resume_from`) whose prompt is `WORKER:` + `TARGET_GIT_ROOT:` + this skill + the named PRD / pack paths. Relay `EDGE_CASES` or the plan path to the user. Stop.
 
 If this harness cannot spawn: you are the worker.
 

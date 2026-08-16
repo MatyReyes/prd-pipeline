@@ -16,6 +16,8 @@ This skill is complete by itself. Orchestrators must only call you after the pla
 
 If the prompt starts with `WORKER:` or you are already a subagent (including a Luna / OpenCode paste): do the work below. Do not spawn.
 
+`TARGET_GIT_ROOT`: nearest `.git` walking up from the plan file. `cd` there before tests and `git`. If spawning a coder, set the child’s `cwd` to that path and put `TARGET_GIT_ROOT` in the prompt.
+
 If you are the **top-level** session and this harness can spawn:
 
 - **Handoff** (user said Luna / another chat / `handoff`): do **not** code. Print the `Copy this:` packet from `orchestrating-prd-cycle` and stop.
