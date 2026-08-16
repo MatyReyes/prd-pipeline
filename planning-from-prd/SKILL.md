@@ -16,7 +16,13 @@ This skill is complete by itself. After the plan file exists (and the user has s
 
 If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
 
-If the `WORKER:` prompt names a **sibling feature PRD** (another `NN-*.md` that is not contract/standard/parent), **stop**. Say `CONTAMINATED`. Do not write a plan. The parent must respawn with a closed file list.
+If the `WORKER:` prompt names a **sibling feature PRD** (another `NN-*.md` that is not contract/standard/parent), do not write a plan. Reply with exactly:
+
+```
+CONTAMINATED
+```
+
+and which extra file was in the prompt. Stop. The **parent** respawns you clean — that is not the end of the cycle.
 
 If you are the **top-level** session and this harness can spawn: do **not** write the plan yourself. Resolve `TARGET_GIT_ROOT` (nearest `.git` up from the PRD). Spawn **one** new subagent (`cwd` = that path, `capability_mode: read-write`, never `resume_from`) whose prompt is `WORKER:` + `TARGET_GIT_ROOT:` + this skill + the named PRD / pack paths. Relay `EDGE_CASES` or the plan path to the user. Stop.
 

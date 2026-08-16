@@ -16,6 +16,8 @@ This skill is complete by itself. After the verdict, **stop**. FAIL goes back to
 
 If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
 
+If the `WORKER:` prompt names a sibling **feature PRD** (not contract, not this PRD, not this plan, not earlier `plans/*.plan.md` file lists), reply `CONTAMINATED` and the extra path. Do not verdict. The parent respawns clean.
+
 If you are the **top-level** session and this harness can spawn: do **not** review the diff yourself. Resolve `TARGET_GIT_ROOT` (nearest `.git` walking up from the plan, else the PRD, else the pack). Spawn **one** new subagent with `cwd` = that path, prompt `WORKER:` + `TARGET_GIT_ROOT:` + this skill + contract + PRD + plan (never `resume_from`). Relay `PASS` / `FAIL` exactly. Stop.
 
 If this harness cannot spawn: you are the worker.

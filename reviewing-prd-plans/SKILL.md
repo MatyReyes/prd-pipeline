@@ -16,7 +16,13 @@ This skill is complete by itself. After the verdict, **stop**. If FAIL, the pare
 
 If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
 
-If the `WORKER:` prompt names a sibling feature PRD, **stop**. Say `CONTAMINATED`. Do not verdict.
+If the `WORKER:` prompt names a sibling feature PRD, do not verdict. Reply with exactly:
+
+```
+CONTAMINATED
+```
+
+and which extra file was in the prompt. The parent respawns a clean reviewer. Do not end the user's cycle.
 
 If you are the **top-level** session and this harness can spawn: do **not** judge the plan yourself. Spawn **one** new subagent (`capability_mode: read-only`, never `resume_from`) whose prompt is `WORKER:` + this skill + contract + PRD + plan. Relay `PASS` / `FAIL` exactly. Stop.
 

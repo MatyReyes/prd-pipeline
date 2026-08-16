@@ -76,6 +76,8 @@ resume_from is forbidden.
 
 If the harness spawn tool has `resume_from`, leave it unset. If it has `cwd`, set `TARGET_GIT_ROOT`.
 
+If a child returns **`CONTAMINATED`**: do **not** stop the cycle and do not ask the user to start over. Respawn **immediately** — new worker, same role, closed file list only, `resume_from` unset. Max **once**. If the second child is still `CONTAMINATED`, stop and show both prompts (the bug is the parent). The first contaminated worker is dead; never resume it.
+
 Skip whatever is already done (existing `PASS` plan, user said skip / shipped). Resume mid-cut: if the plan is `PASS` and they said “code in Luna”, start at step 3. Do not replan.
 
 **Only** if they explicitly say `step=plan` / “solo el review” / one verb: do that **one** child and stop. That is the exception, not the product.
@@ -258,6 +260,7 @@ If a child skill is not installed, paste its contract into the prompt (PASS/FAIL
 - You reused a subagent
 - You “reused _run.md” as if it were the planner
 - The worker prompt mentions a sibling feature PRD
+- You treated `CONTAMINATED` as the end of the run instead of respawning clean
 - You spawned a coder in handoff mode
 - You offered Luna / OpenCode / another tool as a **spawn** model
 - You continued past FAIL
