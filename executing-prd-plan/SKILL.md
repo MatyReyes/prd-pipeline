@@ -37,8 +37,9 @@ If the prompt is a **repair cut** (from a code-review FAIL): treat that cut as t
 ## How you code
 
 1. **Tests first** — the tests the plan named, then the minimum code that makes them pass.
-2. Touch only files the plan listed (or the repair cut).
-3. Do not invent product, names, or screens.
+2. Touch files the plan listed (or the repair cut).
+3. **Catalog fallout:** if the plan changes a shared catalog, you may also edit **existing** tests whose fixtures still use the old values. Smallest change (one string / import). No new cases, no product. List those files in `git diff --stat` and label them catalog fixtures.
+4. Do not invent product, names, or screens.
 
 **Installed skills / plugins:** you may use whatever the user already has (TDD, framework patterns, i18n, verification) as **how** to implement. You may not use a skill that redesigns, specs, or "improves" the product. If a skill contradicts the plan, the plan wins. Stay pragmatic. Stay inside the plan.
 
@@ -46,7 +47,7 @@ If the prompt is a **repair cut** (from a code-review FAIL): treat that cut as t
 
 Do not say done, ready, or shipped without pasting:
 
-1. `git diff --stat` — **only** files the plan (or repair cut) named. If the stat shows extras, you are not done; revert or justify by asking.
+1. `git diff --stat` — plan files + catalog-fixture tests only. Other extras: revert or ask.
 2. The plan's **test command** and its **full output**.
 3. The PRD **Done when** (quoted from the plan), item by item, with evidence in the repo (tests, not prose).
 

@@ -51,7 +51,9 @@ If the PRD has an **agent section**, Done-when / Forbidden / Touch come from the
 ## Questions (answer from the repo, not from prose)
 
 1. Is every **Done when** (agent section if present, else goals / promises) **green with evidence in the repo** (tests that ran, not a paragraph)?
-2. Are there files or behaviors **outside the plan** (or outside the repair cut)?
+2. Are there files or behaviors **outside the plan** (or outside the repair cut)?  
+   **Not a FAIL:** an *existing* test whose diff is only a fixture/import forced by a catalog/enum/CHECK this plan **did** change (old slug → new slug).  
+   **Still a FAIL:** new tests, new cases, product code, or a file that is not a test.
 3. Did Forbidden / non-goals / "does not touch" get violated?
 
 If you ran the command and it failed, or a Done-when has no test that passed, it is not done. If you **did not run** the command, you have no verdict — run it or stop. Do not FAIL the product for your missing shell.

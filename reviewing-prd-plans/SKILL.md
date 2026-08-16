@@ -62,6 +62,8 @@ A plan that implements **this** PRD strictly while later pack PRDs are still und
 
 A plan that keeps a loophole, alias, or legacy path "until a later PRD" when **this** PRD or the contract already forbids it = FAIL.
 
+A plan that changes a catalog (roles, slugs, CHECK, enum) and only lists the tests the author happened to open — without the **class** “existing tests that fixture the old values” — is incomplete. FAIL that gap. Do not demand a complete filename list.
+
 If FAIL, name the deviation in the form: `PRD: … | Plan: …`.
 
 ## Do not

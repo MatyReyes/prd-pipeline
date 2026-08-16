@@ -113,6 +113,7 @@ Example: feature `platform_admin/prds/01-caparazon.md` → `platform_admin/prds/
 Do not invent `prds/<slug>/` if the pack already lives somewhere else.
 
 - **Files to create/touch** — agent-section Touch, else Scope + data, mapped onto **this** repo.
+- **Catalog fallout (a class, not a closed grep)** — if this cut changes a shared catalog (roles, slugs, CHECK, enum, union), the allowlist includes **existing tests that fixture the old values**. State the class in the plan (`any test still using theater slugs`, etc.). Edits there are fixture-only. Do not pretend you listed every file.
 - **Step order**
 - **Tests first** — agent-section tests + gaps the repo must prove. Name files and the command.
 - **What you will not touch** — agent-section Forbidden + non-goals + Scope "does not" + contract / parent fences. **Do not implement sibling PRDs.**
