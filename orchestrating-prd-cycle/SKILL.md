@@ -1,8 +1,8 @@
 ---
 name: orchestrating-prd-cycle
-description: Use when running one PRD step or the full pack (plan → review plan → code → review code), spawning a fresh subagent per launch, choosing spawn vs handoff-code, or when the user says orchestrating-prd-cycle, /orchestrating-prd-cycle, "plan this PRD", "review this plan", "review the code", "run the PRD cycle", "I already have the PRDs", "start from scheduling", or asks to use the installed orchestrating-prd-cycle skill. Do not use to write PRDs or to code yourself.
+description: Use when automating the PRD cycle with fewer user steps (one command runs plan → review plan → code → review code), walking a pack or one remaining PRD, spawning a fresh subagent per role, choosing spawn vs handoff-code, or when the user says orchestrating-prd-cycle, /orchestrating-prd-cycle, "run the PRD cycle", "I already have the PRDs", "start from scheduling", or asks to use the installed orchestrating-prd-cycle skill. Do not use to write PRDs or to code yourself.
 user-invocable: true
-argument-hint: "[plan|review-plan|code|review-code] [prd or plan path] [handoff|spawn]"
+argument-hint: "[prd or pack path] [handoff|spawn] [skip=…]"
 when-to-use: orchestrate PRD cycle, spawn vs handoff, run all PRDs, use orchestrating-prd-cycle
 ---
 
@@ -14,32 +14,28 @@ You are the parent session. You do not write PRDs. You do not code. You do not r
 
 Only send them to `writing-prds` if there are **no** feature PRDs in the named folder (and they did not point at files).
 
-## Solo or cycle
+## One command — fewer steps
 
-**Default: one launch = one new subagent.** You stay the parent. You never do the child's job.
+The user used to open a chat per role. **This skill replaces that.** One launch. You stay the parent. You spawn a **new** child per role and chain them. They do not launch plan, then review, then code.
 
 ```
-/orchestrating-prd-cycle plan platform_admin/prds/02-sillas.md
-/orchestrating-prd-cycle review-plan platform_admin/prds/02-sillas.md
-/orchestrating-prd-cycle code platform_admin/prds/plans/02-sillas.plan.md handoff
-/orchestrating-prd-cycle review-code platform_admin/prds/02-sillas.md
+/orchestrating-prd-cycle platform_admin/prds/02-sillas.md handoff
+/orchestrating-prd-cycle pack=platform_admin/prds handoff skip=01-caparazon
 ```
 
-Same if they say “plan 02-sillas” / “review this plan” / “execute in Luna” / “review the code” while this skill is loaded.
+For **that PRD** (or each remaining PRD in the pack) you, without waiting for a new slash:
 
-| Step | Child skill | `capability_mode` | `model` |
-|---|---|---|---|
-| `plan` | `planning-from-prd` | `read-write` | `planning_model` |
-| `review-plan` | `reviewing-prd-plans` | `read-only` | `planning_model` |
-| `code` + spawn | `executing-prd-plan` | `all` | `coding_model` |
-| `code` + handoff | none — print `Copy this:`, pause | — | — |
-| `review-code` | `reviewing-prd-code` | `read-only` (shell only for `git diff` / tests) | `planning_model` |
+1. Spawn planner — unless a plan already exists and they did not say replan  
+2. Spawn plan reviewer — skip if they already said the plan is `PASS`  
+3. `PASS` → spawn coder **or** print `Copy this:` and **pause** (handoff)  
+4. After code (or after they say the Luna code is done) → spawn code reviewer  
+5. `PASS` → next PRD in the schedule. `FAIL` → repair cut → code again → new reviewer  
 
-After that **one** child returns, **stop**. Do not walk the next step or the next PRD unless they launch again (or they asked for the full pack).
+Every child prompt starts with `WORKER:` and names only that role's files. Never `resume_from`. Never two roles in one child.
 
-Every child prompt starts with `WORKER:` and names only the files that role may read. Never `resume_from`. Never two roles in one child.
+Skip whatever is already done (existing `PASS` plan, user said skip / shipped). Resume mid-cut: if the plan is `PASS` and they said “code in Luna”, start at step 3. Do not replan.
 
-If they named a **pack** and no step, walk the schedule (section 3). If they named a **step**, do not walk the pack.
+**Only** if they explicitly say `step=plan` / “solo el review” / one verb: do that **one** child and stop. That is the exception, not the product.
 
 ## 1. Resolve the pack
 

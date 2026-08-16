@@ -141,20 +141,21 @@ Ask me anything you need. Don't assume.
 
 ---
 
-## One step, still a subagent
+## Fewer steps
 
-Stay in **one** parent chat. Each slash is a **new** child. The parent does not plan, review, or code.
+One parent chat. **One** slash. The parent chains a new child per role (plan → review plan → code → review code). You do not open a chat per role and you do not launch each step.
 
 ```
-/orchestrating-prd-cycle plan platform_admin/prds/02-sillas.md
-/orchestrating-prd-cycle review-plan platform_admin/prds/02-sillas.md
-/orchestrating-prd-cycle code platform_admin/prds/plans/02-sillas.plan.md handoff
-/orchestrating-prd-cycle review-code platform_admin/prds/02-sillas.md
+/orchestrating-prd-cycle platform_admin/prds/02-sillas.md handoff
 ```
 
-`/planning-from-prd`, `/reviewing-prd-plans`, `/executing-prd-plan`, and `/reviewing-prd-code` do the same if the harness can spawn: they launch a worker and relay. Luna cannot spawn — there you *are* the worker (handoff paste).
+```
+/orchestrating-prd-cycle pack=platform_admin/prds handoff skip=01-caparazon
+```
 
-After one child returns, the parent **stops**. Next step = you launch again (or say “codeo terminado” after handoff so it can `review-code`).
+Already have a `PASS` plan? It starts at code. Handoff pauses with `Copy this:` for Luna; you come back to **this** chat and say the code is done — review-code fires by itself.
+
+`step=plan` (one child only) is the exception.
 
 ---
 
