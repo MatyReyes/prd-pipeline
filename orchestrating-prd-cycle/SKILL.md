@@ -143,9 +143,9 @@ Dependents stay in the same working tree so they see the previous cut. Do not is
 Spawn a **new** subagent:
 
 - Skill: `reviewing-prd-code`
-- Prompt: contract if any + that PRD + this cut (diff / files the plan named)
+- Prompt: contract if any + that PRD + this cut. Tell it to **run** `git diff --stat` and the plan's test command in the repo that has `.git`. Do not FAIL because a prior session's paste is missing.
 - `model`: `planning_model`
-- `capability_mode`: `read-only` (shell only if needed to read `git diff` / test output)
+- `capability_mode`: `read-only` plus shell for git and tests
 
 **PASS** → next PRD / next wave.
 

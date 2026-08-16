@@ -16,7 +16,7 @@ This skill is complete by itself. After the verdict, **stop**. FAIL goes back to
 
 If the prompt starts with `WORKER:` or you are already a subagent: do the work below. Do not spawn.
 
-If you are the **top-level** session and this harness can spawn: do **not** review the diff yourself. Spawn **one** new subagent (`capability_mode: read-only`, shell only for `git diff` / test output, never `resume_from`) whose prompt is `WORKER:` + this skill + contract + PRD + plan. Relay `PASS` / `FAIL` exactly. Stop.
+If you are the **top-level** session and this harness can spawn: do **not** review the diff yourself. Spawn **one** new subagent (`capability_mode: read-only` plus shell for `git` and the plan's test command, never `resume_from`) whose prompt is `WORKER:` + this skill + contract + PRD + plan + **the repo root that contains `.git` for this cut**. Relay `PASS` / `FAIL` exactly. Stop.
 
 If this harness cannot spawn: you are the worker.
 
@@ -25,7 +25,20 @@ If this harness cannot spawn: you are the worker.
 1. The pack **contract** if present (`kind: contract` or filename contains `contract`).
 2. The feature PRD.
 3. The plan (or the repair cut) — file allowlist.
-4. The diff for **this cut only** (`git diff` against the cut's base, or the files the plan named). Do not review the rest of the repo.
+4. The diff for **this cut only**. **You** run the evidence. A previous chat's paste is not enough and is not a FAIL by itself.
+
+## You must run (do not skip)
+
+`cd` into the **git repo that owns the files** (this pack may live in a monorepo folder with its own `.git`, e.g. `platform_admin/`). If `git rev-parse` fails, say so and **stop** — that is not a product FAIL; the parent must reopen the review in the right cwd.
+
+Then run, and read the output:
+
+1. `git status` and `git diff --stat` (and `git diff --stat --cached` if needed) for the plan's allowlist.
+2. The plan's **test command** (from the plan file). If the plan lists several paths, run those. Fresh output. Exit code 0 is not assumed.
+
+Missing output from Luna / the coder is **not** a violation. You did not inherit their terminal. Run the commands.
+
+Untracked files the plan said to **create** are in scope. Do not FAIL them for being untracked.
 
 Do not read sibling feature PRDs.
 
@@ -39,7 +52,7 @@ If the PRD has an **agent section**, Done-when / Forbidden / Touch come from the
 2. Are there files or behaviors **outside the plan** (or outside the repair cut)?
 3. Did Forbidden / non-goals / "does not touch" get violated?
 
-If an item cannot be demonstrated, it is not done.
+If you ran the command and it failed, or a Done-when has no test that passed, it is not done. If you **did not run** the command, you have no verdict — run it or stop. Do not FAIL the product for your missing shell.
 
 ## Verdict
 
